@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content= "width=device-width, user-scalable=no">
+	<title>The Settlers of Catan</title>
+	<link rel="icon" href="icon.png">
+	<script src="/socket.io/socket.io.js"></script>
+	<script defer src="static/Tools.js"></script>
+	<script defer src="static/main/input.js"></script>
+	<script defer src="static/main/resources.js"></script>
+	<script defer src="static/main/draw_methods.js"></script>
+	<script defer src="static/main.js"></script>
+	<style type="text/css">
+		@font-face {
+    		font-family: Minion Pro;
+    		src: url("static/fonts/MinionPro-Regular.otf") format("opentype");
+		}
+		@font-face {
+    		font-family: Minion Pro;
+    		font-weight: bold;
+    		src: url("static/fonts/MinionPro-Semibold.otf") format("opentype");
+		}
+		@font-face {
+    		font-family: Minion Pro;
+			font-style: italic;
+    		src: url("static/fonts/MinionPro-MediumIt.otf") format("opentype");
+		}
+		@font-face {
+    		font-family: Minion Pro;
+			font-style: italic;
+    		font-weight: bold;
+    		src: url("static/fonts/MinionPro-SemiboldIt.otf") format("opentype");
+		}
+		@font-face {
+    		font-family: Cormorant;
+    		src: url("static/fonts/CormorantSC-Regular.otf") format("opentype");
+		}
+		@font-face {
+    		font-family: Cormorant;
+			font-weight: lighter;
+    		src: url("static/fonts/CormorantSC-Light.otf") format("opentype");
+		}
+		@font-face {
+    		font-family: Cormorant;
+			font-weight: bold;
+    		src: url("static/fonts/CormorantSC-Semi.otf") format("opentype");
+		}
+		@font-face {
+    		font-family: Cormorant Bold;
+    		src: url("static/fonts/CormorantSC-Bold.otf") format("opentype");
+		}
+		@font-face {
+    		font-family: Cormorant Medium;
+    		src: url("static/fonts/CormorantSC-Medium.otf") format("opentype");
+		}
+
+		body {
+			margin: 0;
+			overflow: hidden;
+
+			user-select: none;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+			-moz-user-select: none;
+		}
+		p {
+			margin-bottom: 0.5%;
+			margin-top: 1.5%;
+			margin-left: 1.5%;
+			font-family: Minion Pro;
+			padding-right: 1%;
+			
+			user-select: none;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+			-moz-user-select: none;
+		}
+		div::-webkit-scrollbar {
+			display: none;
+		}
+		div {
+			-ms-overflow-style: none;
+			scrollbar-width: none;
+		}
+		h1 {
+			margin: 2%;
+			text-align: center;
+			color: #2f2f2f;
+			font: inherit;
+			
+			user-select: none;
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+			-moz-user-select: none;
+		}
+		.x_button {
+			margin: 2%;
+			color: #4f4f4f;
+			background-color: inherit;
+			border: none;
+			font: inherit;
+			font-size: 75%;
+			width: 7vh;
+			height: 7vh;
+			position: absolute;
+			top: -1.5vh;
+			right: -1.5vh;
+		}
+		button:focus { outline:0; }
+
+		.harbor_trade {
+			width: 15%;
+			height: 30vh;
+			margin: 0;
+			position: absolute;
+			left: 4.16%;
+			top: 8vh;
+			text-align: center;
+			font-size: 4.5vh;
+			border: none;
+		}
+		.rate {
+			border: none;
+			margin-top: -0.5vh;
+			width: 100%;
+			height: 5vh;
+		}
+		img {
+			width: 100%;
+			margin-top: 2vh;
+		}
+		.circle {
+			border-radius: 50%;
+			width: 14.2vh;
+			height: 14.2vh;
+			top: 9.85vh;
+			left: -50vh;
+			border: 5px solid black;
+			position: absolute;
+			z-index: 1;
+		}
+	</style>
+</head>
+<body></body>
+	<canvas id="canvas"></canvas>
+	<div id="eventlog" style="margin: 0; position: absolute; overflow: scroll; border: 0.2vh solid #272727; border-width: 0.2vh; font-size: 2.2vh;" onmouseover="ui.mouseOverEventlog = true;" onmouseout="ui.mouseOverEventlog = false;"></div>
+
+	<div id="setup" style="margin: 0; position: absolute; overflow: hidden; border: 0.4vh solid #4f4f4f; background-color: #eae7df; width: 100vh; height: 100vh; top: -0.2vh; display: none;">
+		
+	</div>
+
+	<div id="htmenu" style="margin: 0; padding: 0; position: absolute; overflow: visible; width: 100vh; height: 60%; left: 15%; top: 15%; font: 5vh Minion Pro; display: none;" onmouseover="ui.mouseOverMenu = true;" onmouseout="ui.mouseOverMenu = false;">
+		<div style="margin: 0; overflow: hidden; background-color: #eae7df; width: 100%; height: 33vh; border: 0.4vh solid #4f4f4f;">
+			<h1 id="title">Harbor Trades</h1>
+			<div style="width: 100%; height: 29vh; padding: 1.8%; padding-top: 0;">
+				<div class="harbor_trade">
+					<img src="static/resources/wheat.png" onclick="ui.harborTrade.selected = 0;">
+					<p id="rate 0" class="rate">4:1</p>
+				</div>
+				<div class="harbor_trade" style="left: 23.33%;">
+					<img src="static/resources/sheep.png" onclick="ui.harborTrade.selected = 1;">
+					<p id="rate 1" class="rate">4:1</p>
+				</div>
+				<div class="harbor_trade" style="left: 42.5%;">
+					<img src="static/resources/wood.png" onclick="ui.harborTrade.selected = 2;">
+					<p id="rate 2" class="rate">4:1</p>
+				</div>
+				<div class="harbor_trade" style="left: 61.66%">
+					<img src="static/resources/brick.png" onclick="ui.harborTrade.selected = 3;">
+					<p id="rate 3" class="rate">4:1</p>
+				</div>
+				<div class="harbor_trade" style="left: 80.83%;">
+					<img src="static/resources/ore.png" onclick="ui.harborTrade.selected = 4;">
+					<p id="rate 4" class="rate">4:1</p>
+				</div>
+				<div id="circle" class="circle"></div>
+			</div>
+			<button id="x button" class="x_button" onclick='ui.menu="board"'>×</button>
+		</div>
+	</div>
+</body>
+</html>
